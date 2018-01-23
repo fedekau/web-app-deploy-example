@@ -39,6 +39,10 @@ resource "aws_instance" "backend" {
   vpc_security_group_ids = ["${aws_security_group.allow_http.id}", "${aws_security_group.allow_ssh.id}"]
 }
 
-output "public_dns" {
+output "backend_host_name" {
   value = "${aws_instance.backend.public_dns}"
+}
+
+output "backend_port" {
+  value = "${lookup(aws_security_group.allow_http.ingress[0], "to_port")}"
 }
