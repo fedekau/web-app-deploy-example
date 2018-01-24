@@ -19,4 +19,4 @@ chef_version '>= 12.1' if respond_to?(:chef_version)
 #
 # source_url 'https://github.com/<insert_org_here>/backend_app'
 
-depends 'nodejs', '>= 5.0.0'
+depends 'nodejs', '~> 5.0.0'
