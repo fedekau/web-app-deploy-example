@@ -1,0 +1,19 @@
+{
+  "name": "backend-app",
+  "description": "Backend app",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+    "chef_client": {
+      "interval": 300,
+      "splay": 60
+    }
+  },
+  "override_attributes": {
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[backend_app::default]"
+  ],
+  "env_run_lists": {
+  }
+}
