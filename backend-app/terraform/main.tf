@@ -8,7 +8,7 @@ resource "aws_key_pair" "admin" {
 }
 
 resource "aws_security_group" "allow_ssh" {
-  name = "allow_ssh"
+  name = "allow_incoming_ssh"
   description = "Allow ssh connections on port 22"
 
   ingress {
@@ -20,12 +20,38 @@ resource "aws_security_group" "allow_ssh" {
 }
 
 resource "aws_security_group" "allow_http" {
-  name = "allow_http"
+  name = "allow_incoming_http"
   description = "Allow http connections on port 80"
 
   ingress {
       from_port = 80
       to_port = 80
+      protocol = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+      from_port = 80
+      to_port = 80
+      protocol = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "allow_https" {
+  name = "allow_incoming_https"
+  description = "Allow https connections on port 443"
+
+  ingress {
+      from_port = 443
+      to_port = 443
+      protocol = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+      from_port = 443
+      to_port = 443
       protocol = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
   }
@@ -36,7 +62,11 @@ resource "aws_instance" "backend" {
   instance_type = "t2.micro"
 
   key_name = "${aws_key_pair.admin.key_name}"
-  vpc_security_group_ids = ["${aws_security_group.allow_http.id}", "${aws_security_group.allow_ssh.id}"]
+  vpc_security_group_ids = [
+    "${aws_security_group.allow_http.id}",
+    "${aws_security_group.allow_https.id}",
+    "${aws_security_group.allow_ssh.id}"
+    ]
 }
 
 output "backend_host_name" {
@@ -44,5 +74,5 @@ output "backend_host_name" {
 }
 
 output "backend_port" {
-  value = "${lookup(aws_security_group.allow_http.ingress[0], "to_port")}"
+  value = "${lookup(aws_security_group.allow_incoming_http.ingress[0], "to_port")}"
 }
