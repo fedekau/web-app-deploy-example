@@ -74,5 +74,5 @@ output "backend_host_name" {
 }
 
 output "backend_port" {
-  value = "${lookup(aws_security_group.allow_incoming_http.ingress[0], "to_port")}"
+  value = "${lookup(aws_security_group.allow_http.ingress[0], "to_port")}"
 }
