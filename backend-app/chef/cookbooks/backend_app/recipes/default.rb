@@ -14,3 +14,9 @@ git "/home/ubuntu/web-app-deploy-example" do
 end
 
 include_recipe "sc-mongodb::default"
+
+node.default['nodejs']['install_method'] = 'binary'
+node.default['nodejs']['version'] = '8.9.4'
+node.default['nodejs']['binary']['checksum'] = '21fb4690e349f82d708ae766def01d7fec1b085ce1f5ab30d9bda8ee126ca8fc'
+
+include_recipe "nodejs"
