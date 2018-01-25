@@ -12,3 +12,5 @@ git "/home/ubuntu/web-app-deploy-example" do
   revision "master"
   action :sync
 end
+
+include_recipe "sc-mongodb::default"

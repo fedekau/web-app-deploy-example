@@ -2,3 +2,5 @@
 source 'https://supermarket.chef.io'
 
 metadata
+
+cookbook 'sc-mongodb', '~> 1.0.1'
