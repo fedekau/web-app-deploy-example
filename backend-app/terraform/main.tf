@@ -17,6 +17,13 @@ resource "aws_security_group" "allow_ssh" {
       protocol = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
   }
+
+  egress {
+      from_port = 22
+      to_port = 22
+      protocol = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 resource "aws_security_group" "allow_http" {
@@ -66,7 +73,35 @@ resource "aws_instance" "backend" {
     "${aws_security_group.allow_http.id}",
     "${aws_security_group.allow_https.id}",
     "${aws_security_group.allow_ssh.id}"
-    ]
+  ]
+
+  provisioner "file" {
+    source      = "../../.keys/id_rsa_deploy"
+    destination = "/home/ubuntu/.ssh/id_rsa_deploy"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = "${file("../../.keys/id_rsa_admin")}"
+    }
+  }
+
+  provisioner "chef" {
+    environment     = "_default"
+    run_list        = ["backend_app::default"]
+    node_name       = "backend-app"
+    server_url      = "https://api.chef.io/organizations/fedekau"
+    recreate_client = true
+    user_name       = "fedekau"
+    user_key        = "${file("../chef/.chef/fedekau.pem")}"
+    version         = "13.6.4"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = "${file("../../.keys/id_rsa_admin")}"
+    }
+  }
 }
 
 output "backend_host_name" {
