@@ -20,3 +20,9 @@ node.default['nodejs']['version'] = '8.9.4'
 node.default['nodejs']['binary']['checksum'] = '21fb4690e349f82d708ae766def01d7fec1b085ce1f5ab30d9bda8ee126ca8fc'
 
 include_recipe "nodejs"
+include_recipe 'yarn::default'
+
+yarn_install '/home/ubuntu/web-app-deploy-example/backend-app' do
+  user 'root'
+  action :run
+end
