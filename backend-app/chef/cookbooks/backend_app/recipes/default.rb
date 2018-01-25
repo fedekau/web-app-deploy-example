@@ -26,3 +26,29 @@ yarn_install '/home/ubuntu/web-app-deploy-example/backend-app' do
   user 'root'
   action :run
 end
+
+file '/home/ubuntu/web-app-deploy-example/backend-app/app.js' do
+  mode '755'
+end
+
+systemd_unit 'backend-app.service' do
+  content <<-CONTENT
+    [Unit]
+    Description=Run backend app
+
+    [Service]
+    Environment=PORT=80
+    PIDFile=/tmp/backend-app-99.pid
+    User=root
+    Group=root
+    Restart=always
+    KillSignal=SIGQUIT
+    WorkingDirectory=/home/ubuntu/web-app-deploy-example/backend-app/
+    ExecStart=/home/ubuntu/web-app-deploy-example/backend-app/app.js
+
+    [Install]
+    WantedBy=multi-user.target
+  CONTENT
+
+  action [:create, :enable, :start]
+end
