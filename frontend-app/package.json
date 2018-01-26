@@ -26,7 +26,7 @@
   "scripts": {
     "start": "cross-env PORT=4100 react-scripts start",
     "build": "react-scripts build",
-    "generate-s3-metadata": "cd terraform && go run vendor/github.com/saymedia/terraform-s3-dir/main.go ../build web-app-deploy-example | json_pp > build_files.tf.json",
+    "generate-s3-metadata": "cd terraform && go run vendor/github.com/saymedia/terraform-s3-dir/main.go ../build web-app-deploy-example > build_files.tf.json && node -e \"const util = require('util'); let json = require('./build_files.tf.json'); Object.keys(json.resource.aws_s3_bucket_object).forEach((k) => json.resource.aws_s3_bucket_object[k]['depends_on'] = ['aws_s3_bucket.frontend']); console.log(JSON.stringify(json))\" | json_pp",
     "test": "cross-env PORT=4100 react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   }

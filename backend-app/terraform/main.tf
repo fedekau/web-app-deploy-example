@@ -102,6 +102,10 @@ resource "aws_instance" "backend" {
       private_key = "${file("../../.keys/id_rsa_admin")}"
     }
   }
+
+  provisioner "local-exec" {
+    command = "cd ../chef && knife node run_list set backend-app 'role[backend-app]'"
+  }
 }
 
 output "backend_host_name" {

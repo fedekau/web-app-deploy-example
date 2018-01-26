@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+set -e
+
+current=$(pwd)
+
+function backend() {
+  echo "Destroying backend..."
+
+  cd backend-app/terraform
+
+  terraform destroy -force
+
+  cd ../chef
+
+  knife node delete backend-app -y
+
+  cd $current
+}
+
+function frontend() {
+  echo "Destroying frontend..."
+
+  cd frontend-app/terraform
+
+  terraform destroy -force
+
+  cd $current
+}
+
+backend && frontend
+
+git add backend-app/terraform/terraform.tfstate*
+git add frontend-app/terraform/terraform.tfstate*
+
+git commit -m "Destroy: Update terraform state files"
