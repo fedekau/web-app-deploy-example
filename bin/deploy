@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+current=$(pwd)
+
+function backend() {
+  echo "Updating backend..."
+
+  cd backend-app/terraform
+
+  terraform plan -out backend.plan
+  terraform apply backend.plan
+
+  rm backend.plan
+
+  cd ../chef/cookbooks/backend_app
+
+  berks install
+  berks upload
+
+  knife ssh 'name:backend-app' 'sudo chef-client' --ssh-user ubuntu --identity-file ../../../../.keys/id_rsa_admin --attribute cloud.public_hostname
+
+  cd $current
+}
+
+function frontend() {
+  echo "Updating frontend..."
+
+  cd frontend-app
+
+  yarn run build
+  yarn run generate-s3-metadata
+
+  cd terraform
+
+  terraform plan -out frontend.plan
+  terraform apply frontend.plan
+
+  rm frontend.plan
+
+  cd $current
+}
+
+backend && frontend
+
+git add backend-app/terraform/terraform.tfstate.backup
+git add frontend-app/terraform/terraform.tfstate.backup
+
+git commit -m "Deploy: Update terraform state files"
