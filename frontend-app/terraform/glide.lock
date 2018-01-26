@@ -1,0 +1,6 @@
+hash: f5aa0ac3d534e7ee5c58a9879018b6cca9ac892d513ea51114f75bf50845253d
+updated: 2018-01-25T15:21:19.108104-03:00
+imports:
+- name: github.com/saymedia/terraform-s3-dir
+  version: 324bc7fe277ab5d10a9d8c794274d85918319050
+testImports: []

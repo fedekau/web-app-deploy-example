@@ -1,0 +1,4 @@
+package: .
+import:
+- package: terraform-s3-dir
+  version: v0.0.3
