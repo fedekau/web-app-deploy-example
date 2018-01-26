@@ -1,3 +1,4 @@
 .keys
 .terraform
 .chef
+frontend-app/terraform/vendor
