@@ -36,6 +36,7 @@ systemd_unit 'backend-app.service' do
 
     [Service]
     Environment=PORT=80
+    Environment=NODE_ENV=production
     PIDFile=/tmp/backend-app-99.pid
     User=root
     Group=root
