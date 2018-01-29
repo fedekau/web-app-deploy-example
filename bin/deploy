@@ -16,7 +16,11 @@ function backend() {
   berks install
   berks upload
 
-  knife ssh 'name:backend-app' 'sudo chef-client' --ssh-user ubuntu --identity-file ../../../../.keys/id_rsa_admin --attribute cloud.public_hostname
+  knife role from file ../../roles/database.json
+  knife role from file ../../roles/backend.json
+
+  knife ssh 'name:backend' 'sudo chef-client' --ssh-user ubuntu --identity-file ../../../../.keys/id_rsa_admin --attribute cloud.public_hostname
+  knife ssh 'name:database' 'sudo chef-client' --ssh-user ubuntu --identity-file ../../../../.keys/id_rsa_admin --attribute cloud.public_hostname
 
   cd $current
 }

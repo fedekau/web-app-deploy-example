@@ -64,6 +64,18 @@ resource "aws_security_group" "allow_https" {
   }
 }
 
+resource "aws_security_group" "allow_mongo" {
+  name = "allow_incoming_mongo"
+  description = "Allow mongo connections on port 27017"
+
+  ingress {
+      from_port = 27017
+      to_port = 27017
+      protocol = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_instance" "backend" {
   ami           = "ami-41e0b93b"
   instance_type = "t2.micro"
@@ -88,8 +100,8 @@ resource "aws_instance" "backend" {
 
   provisioner "chef" {
     environment     = "_default"
-    run_list        = ["backend_app::default"]
-    node_name       = "backend-app"
+    run_list        = ["backend_app::backend"]
+    node_name       = "backend"
     server_url      = "https://api.chef.io/organizations/fedekau"
     recreate_client = true
     user_name       = "fedekau"
@@ -104,7 +116,7 @@ resource "aws_instance" "backend" {
   }
 
   provisioner "local-exec" {
-    command = "cd ../chef && knife node run_list set backend-app 'role[backend-app]'"
+    command = "cd ../chef && knife node run_list set backend 'role[backend]'"
   }
 
   provisioner "local-exec" {
@@ -113,5 +125,47 @@ resource "aws_instance" "backend" {
 
   provisioner "local-exec" {
     command = "echo 'REACT_APP_API_PORT=${lookup(aws_security_group.allow_http.ingress[0], "to_port")}' >> ../../frontend-app/.env.production"
+  }
+}
+
+resource "aws_instance" "database" {
+  ami           = "ami-41e0b93b"
+  instance_type = "t2.micro"
+
+  key_name = "${aws_key_pair.admin.key_name}"
+  vpc_security_group_ids = [
+    "${aws_security_group.allow_http.id}",
+    "${aws_security_group.allow_https.id}",
+    "${aws_security_group.allow_ssh.id}",
+    "${aws_security_group.allow_mongo.id}"
+  ]
+
+  provisioner "chef" {
+    environment     = "_default"
+    run_list        = ["backend_app::database"]
+    node_name       = "database"
+    server_url      = "https://api.chef.io/organizations/fedekau"
+    recreate_client = true
+    user_name       = "fedekau"
+    user_key        = "${file("../chef/.chef/fedekau.pem")}"
+    version         = "13.6.4"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = "${file("../../.keys/id_rsa_admin")}"
+    }
+  }
+
+  provisioner "local-exec" {
+    command = "cd ../chef && knife node run_list set database 'role[database]'"
+  }
+
+  provisioner "local-exec" {
+    command = "echo 'DATABASE_HOST_NAME=${aws_instance.database.public_dns}' > ../../backend-app/.env.production"
+  }
+
+  provisioner "local-exec" {
+    command = "echo 'DATABASE_PORT=${lookup(aws_security_group.allow_mongo.ingress[0], "to_port")}' >> ../../backend-app/.env.production"
   }
 }

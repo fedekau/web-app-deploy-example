@@ -1,5 +1,5 @@
 {
-  "name": "backend-app",
+  "name": "backend",
   "description": "Backend app",
   "json_class": "Chef::Role",
   "default_attributes": {
@@ -12,7 +12,7 @@
   },
   "chef_type": "role",
   "run_list": [
-    "recipe[backend_app::default]"
+    "recipe[backend_app::backend]"
   ],
   "env_run_lists": {
   }

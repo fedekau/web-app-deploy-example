@@ -13,7 +13,11 @@ function backend() {
 
   cd ../chef
 
-  knife node delete backend-app -y
+  knife node delete backend -y
+  knife node delete database -y
+
+  knife role delete database -y
+  knife role delete backend -y
 
   cd $current
 }

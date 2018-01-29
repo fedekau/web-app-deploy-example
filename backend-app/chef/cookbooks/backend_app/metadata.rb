@@ -4,7 +4,7 @@ maintainer_email 'you@example.com'
 license 'All Rights Reserved'
 description 'Installs/Configures backend_app'
 long_description 'Installs/Configures backend_app'
-version '0.6.0'
+version '1.0.2'
 chef_version '>= 12.1' if respond_to?(:chef_version)
 
 # The `issues_url` points to the location where issues for this cookbook are
@@ -19,7 +19,6 @@ chef_version '>= 12.1' if respond_to?(:chef_version)
 #
 # source_url 'https://github.com/<insert_org_here>/backend_app'
 
-depends 'sc-mongodb', '1.0.1'
 depends 'sc-mongodb', '1.0.1'
 depends 'nodejs', '5.0.0'
 depends 'yarn', '0.4.0'
