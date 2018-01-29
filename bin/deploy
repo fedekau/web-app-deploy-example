@@ -37,10 +37,3 @@ function frontend() {
 }
 
 backend && frontend
-
-pwd
-
-git add backend-app/terraform/terraform.tfstate*
-git add frontend-app/terraform/terraform.tfstate*
-
-git commit -m "Deploy: Update terraform state files"
