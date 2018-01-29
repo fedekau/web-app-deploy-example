@@ -106,12 +106,12 @@ resource "aws_instance" "backend" {
   provisioner "local-exec" {
     command = "cd ../chef && knife node run_list set backend-app 'role[backend-app]'"
   }
-}
 
-output "backend_host_name" {
-  value = "${aws_instance.backend.public_dns}"
-}
+  provisioner "local-exec" {
+    command = "echo 'REACT_APP_API_HOST_NAME=${aws_instance.backend.public_dns}' > ../../frontend-app/.env.production"
+  }
 
-output "backend_port" {
-  value = "${lookup(aws_security_group.allow_http.ingress[0], "to_port")}"
+  provisioner "local-exec" {
+    command = "echo 'REACT_APP_API_PORT=${lookup(aws_security_group.allow_http.ingress[0], "to_port")}' >> ../../frontend-app/.env.production"
+  }
 }
