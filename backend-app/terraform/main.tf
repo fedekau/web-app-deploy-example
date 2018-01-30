@@ -64,11 +64,23 @@ resource "aws_security_group" "allow_https" {
   }
 }
 
-resource "aws_security_group" "allow_mongo" {
+resource "aws_security_group" "allow_incoming_mongo" {
   name = "allow_incoming_mongo"
   description = "Allow mongo connections on port 27017"
 
   ingress {
+      from_port = 27017
+      to_port = 27017
+      protocol = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "allow_outcoming_mongo" {
+  name = "allow_outcoming_mongo"
+  description = "Allow mongo connections on port 27017"
+
+  egress {
       from_port = 27017
       to_port = 27017
       protocol = "tcp"
@@ -84,7 +96,8 @@ resource "aws_instance" "backend" {
   vpc_security_group_ids = [
     "${aws_security_group.allow_http.id}",
     "${aws_security_group.allow_https.id}",
-    "${aws_security_group.allow_ssh.id}"
+    "${aws_security_group.allow_ssh.id}",
+    "${aws_security_group.allow_outcoming_mongo.id}"
   ]
 
   provisioner "file" {
@@ -137,7 +150,7 @@ resource "aws_instance" "database" {
     "${aws_security_group.allow_http.id}",
     "${aws_security_group.allow_https.id}",
     "${aws_security_group.allow_ssh.id}",
-    "${aws_security_group.allow_mongo.id}"
+    "${aws_security_group.allow_incoming_mongo.id}"
   ]
 
   provisioner "chef" {
