@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+cd bin/load-testing
+
+rm loadtest.txt
+
+for rate in $(seq 1 10 101); do
+    echo "QPS: $rate"
+
+    vegeta attack -duration=30s -rate $rate -targets targets.txt |
+    vegeta dump -dumper csv |
+    sed "s/$/,$rate/" >> loadtest.txt
+done

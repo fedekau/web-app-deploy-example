@@ -1,0 +1,2 @@
+GET http://ec2-34-226-155-188.compute-1.amazonaws.com/api/articles
+GET http://ec2-34-226-155-188.compute-1.amazonaws.com/api/tags
