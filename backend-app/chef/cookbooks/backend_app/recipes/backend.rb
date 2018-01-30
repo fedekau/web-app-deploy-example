@@ -32,7 +32,7 @@ end
 database_host = nil
 
 search(:node, 'role:database') do |n|
-  database_host = n['fqdn']
+  database_host = n['cloud']['public_ipv4']
   break
 end
 
