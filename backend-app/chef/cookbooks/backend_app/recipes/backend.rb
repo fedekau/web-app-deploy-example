@@ -39,7 +39,8 @@ systemd_unit 'backend-app.service' do
     [Service]
     Environment=PORT=80
     Environment=NODE_ENV=production
-    Environment=MONGODB_URI=mongodb://#{database_host}:27017/conduit"
+    Environment=MONGODB_URI=mongodb://#{database_host}:27017/conduit
+    Environment=SECRET=123456789
     PIDFile=/tmp/backend-app-99.pid
     User=root
     Group=root
