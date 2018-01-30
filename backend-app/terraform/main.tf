@@ -160,12 +160,4 @@ resource "aws_instance" "database" {
   provisioner "local-exec" {
     command = "cd ../chef && knife node run_list set database 'role[database]'"
   }
-
-  provisioner "local-exec" {
-    command = "echo 'DATABASE_HOST_NAME=${aws_instance.database.public_dns}' > ../../backend-app/.env.production"
-  }
-
-  provisioner "local-exec" {
-    command = "echo 'DATABASE_PORT=${lookup(aws_security_group.allow_mongo.ingress[0], "to_port")}' >> ../../backend-app/.env.production"
-  }
 }

@@ -29,6 +29,8 @@ file '/home/ubuntu/web-app-deploy-example/backend-app/app.js' do
   mode '755'
 end
 
+database_host = `curl http://169.254.169.254/latest/meta-data/public-hostname`
+
 systemd_unit 'backend-app.service' do
   content <<-CONTENT
     [Unit]
@@ -37,6 +39,7 @@ systemd_unit 'backend-app.service' do
     [Service]
     Environment=PORT=80
     Environment=NODE_ENV=production
+    Environment=MONGODB_URI=mongodb://#{database_host}:27017/conduit"
     PIDFile=/tmp/backend-app-99.pid
     User=root
     Group=root
