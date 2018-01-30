@@ -29,7 +29,12 @@ file '/home/ubuntu/web-app-deploy-example/backend-app/app.js' do
   mode '755'
 end
 
-database_host = `curl http://169.254.169.254/latest/meta-data/public-hostname`
+database_host = nil
+
+search(:node, 'role:database') do |n|
+  database_host = n['fqdn']
+  break
+end
 
 systemd_unit 'backend-app.service' do
   content <<-CONTENT
