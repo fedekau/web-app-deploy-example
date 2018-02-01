@@ -58,5 +58,5 @@ systemd_unit 'backend-app.service' do
     WantedBy=multi-user.target
   CONTENT
 
-  action [:create, :enable, :start]
+  action [:create, :enable, :start, :restart]
 end
